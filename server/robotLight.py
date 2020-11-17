@@ -24,7 +24,7 @@ class RobotLight(threading.Thread):
 		self.colorBreathB = 0
 		self.breathSteps = 10
 
-		self.lightMode = 'none'		#'none' 'police' 'breath'
+		self.lightMode = 'none'		#'none' 'hazard' 'police' 'breath'
 
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
@@ -66,6 +66,23 @@ class RobotLight(threading.Thread):
 
 	def resume(self):
 		self.__flag.set()
+
+
+	def hazard(self):
+		self.lightMode = 'hazard'
+		self.resume()
+
+
+	def hazardProcessing(self):
+		while self.lightMode == 'hazard':
+			for i in range(0,1):
+				self.setSomeColor(255,40,0,[0,2,3,5,6,8,9,11])
+				time.sleep(0.5)
+				self.setSomeColor(0,0,0,[0,1,2,3,4,5,6,7,8,9,10,11])
+				time.sleep(0.5)
+			if self.lightMode != 'hazard':
+				break
+			#time.sleep(0.1)
 
 
 	def police(self):
@@ -164,6 +181,8 @@ class RobotLight(threading.Thread):
 	def lightChange(self):
 		if self.lightMode == 'none':
 			self.pause()
+		elif self.lightMode == 'hazard':
+			self.hazardProcessing()
 		elif self.lightMode == 'police':
 			self.policeProcessing()
 		elif self.lightMode == 'breath':

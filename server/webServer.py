@@ -37,7 +37,7 @@ except:
     pass
 
 functionMode = 0
-speed_set = 100
+speed_set = 10
 rad = 0.5
 turnWiggle = 60
 
@@ -517,7 +517,7 @@ if __name__ == '__main__':
     try:
         RL=robotLight.RobotLight()
         RL.start()
-        RL.breath(70,70,255)
+        RL.breath(70,70,0)
     except:
         print('Use "sudo pip3 install rpi_ws281x" to install WS_281x package\n使用"sudo pip3 install rpi_ws281x"命令来安装rpi_ws281x')
         pass
