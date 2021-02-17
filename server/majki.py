@@ -33,12 +33,30 @@ def move_backward(speed: int, steps: int):
         sleep(0.1)
     move.motorStop()
 
-if __name__ == '__main__':
+def parking_sensor(RL):
+    RL.parking_sensor()
+    while True:
+        dist = ultra.checkdist()
+        #print(dist)
+        if dist < 1.0:
+            RL.parking_sensor_off_time = dist
+        else:
+            RL.parking_sensor_off_time = 0.95
+
+        if dist < 0.5:
+            RL.parking_sensor_color = [255, 0, 0]
+        else:
+            RL.parking_sensor_color = [0, 255, 0]
+
+        sleep(0.1)
+
+def init():
     try:
         RL=robotLight.RobotLight()
         RL.start()
         #RL.breath(70,70,255)
-        RL.hazard()
+        #RL.hazard()
+        parking_sensor(RL)
     except:
         print('Use "sudo pip3 install rpi_ws281x" to install WS_281x package')
         pass
@@ -53,4 +71,7 @@ if __name__ == '__main__':
         move.setup()
     except:
         pass
+
+if __name__ == '__main__':
+	init()
 

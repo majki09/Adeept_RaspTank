@@ -24,7 +24,10 @@ class RobotLight(threading.Thread):
 		self.colorBreathB = 0
 		self.breathSteps = 10
 
-		self.lightMode = 'none'		#'none' 'hazard' 'police' 'breath'
+		self.lightMode = 'none'		#'none' 'hazard' 'parking_sensor' 'police' 'breath'
+
+		self.parking_sensor_off_time = 0.95
+		self.parking_sensor_color = [0, 255, 0]
 
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
@@ -83,6 +86,23 @@ class RobotLight(threading.Thread):
 			if self.lightMode != 'hazard':
 				break
 			#time.sleep(0.1)
+
+
+	def parking_sensor(self):
+		self.lightMode = 'parking_sensor'
+		self.resume()
+
+
+	def parking_sensorProcessing(self):
+		while self.lightMode == 'parking_sensor':
+			ps_color = self.parking_sensor_color
+			for i in range(0,1):
+				self.setSomeColor(ps_color[0],ps_color[1],ps_color[2],[0,1,2,3,4,5,6,7,8,9,10,11])
+				time.sleep(0.05)
+				self.setSomeColor(0,0,0,[0,1,2,3,4,5,6,7,8,9,10,11])
+				time.sleep(self.parking_sensor_off_time)
+			if self.lightMode != 'parking_sensor':
+				break
 
 
 	def police(self):
@@ -183,6 +203,8 @@ class RobotLight(threading.Thread):
 			self.pause()
 		elif self.lightMode == 'hazard':
 			self.hazardProcessing()
+		elif self.lightMode == 'parking_sensor':
+			self.parking_sensorProcessing()
 		elif self.lightMode == 'police':
 			self.policeProcessing()
 		elif self.lightMode == 'breath':
